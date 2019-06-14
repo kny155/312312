@@ -1,0 +1,7 @@
+
+{
+    "PORT": 5000,
+    "DATABASE_URL": "mongodb://localhost:27017/diploma",
+    "TOKEN_SECRET": "E97AFBG697E727472CE8A76B2F750",
+    "TOKEN_LIFETIME_HOURS": 12
+}

@@ -1,0 +1,472 @@
+swagger: "2.0"
+info:
+  title: Diploma
+  description: 'This is server '
+  contact:
+    email: kny.5298@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+- name: users
+  description: Users operations
+- name: authentication
+  description: Authentication operations 
+- name: parkings
+  description: Parkings operations 
+- name: devices
+  description: Devices operations
+paths:
+  /users:
+    get:
+      tags:
+      - users
+      summary: Get user by token
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+      security:
+      - api_key: []
+    put:
+      tags:
+      - users
+      summary: Updated user
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          $ref: '#/definitions/UpdateUser'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid user supplied
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          description: User not found
+      security:
+      - api_key: []
+  /registration:
+    post:
+      tags:
+      - authentication
+      summary: Registration user
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+            password:
+              type: string
+              required: true
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            properties:
+              status:
+                type: string
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        405:
+          description: "Invalid input"
+  /login:
+    post:
+      tags:
+      - authentication
+      summary: Login
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+            password:
+              type: string
+              required: true
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            properties:
+              token:
+                type: string
+              user:
+                $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        405:
+          description: "Invalid input"
+  /relogin:
+    get:
+      tags:
+      - authentication
+      summary: Login by token
+      responses:
+        200:
+          description: Token Valid
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+      security:
+      - api_key: []
+  /parkings:
+    post:
+      tags:
+      - parkings
+      summary: Created parking
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          $ref: '#/definitions/UpdateParking'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parking'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+      security:
+      - api_key: []
+    get:
+      tags:
+      - parkings
+      summary: Get all parkings 
+      responses:
+        200:
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Parking'
+  /parkings/{id}:
+    get:
+      tags:
+      - parkings
+      summary: Get parking by parking id
+      parameters:
+      - name: id
+        in: path
+        description: 'The parking id that needs to be fetched.'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parking'
+        400:
+          description: Invalid id supplied
+        404:
+          description: Parking not found    
+    put:
+      tags:
+      - parkings
+      summary: Updated user
+      parameters:
+      - name: id
+        in: path
+        description: 'The parking id that needs to be fetched.'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      - in: "body"
+        name: "body"
+        schema:
+          $ref: '#/definitions/UpdateParking'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parking'
+        400:
+          description: Invalid id supplied
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          description: Parking not found
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - parkings
+      summary: Updated user
+      parameters:
+      - name: id
+        in: path
+        description: 'The parking id that needs to be fetched'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parking'
+        400:
+          description: Invalid id supplied
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          description: Parking not found
+      security:
+      - api_key: []
+  /parkings-owner:
+    get:
+      tags:
+      - parkings
+      summary: Get parkings by owner token
+      responses:
+        200:
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Parking'
+      security:
+      - api_key: []
+  /parkings/{id}/seats:
+    get:
+      tags:
+      - parkings
+      summary: Get seats now by parking id
+      parameters:
+      - name: id
+        in: path
+        description: 'The parking id that needs to be fetched.'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              allSeats:
+                type: number
+                required: true
+              clearSeats:
+                type: number
+        400:
+          description: Invalid id supplied
+        404:
+          description: Parking not found 
+      security:
+      - api_key: []   
+  /devices:
+    post:
+      tags:
+      - devices
+      summary: Add device
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          type: object
+          properties:
+            parkingId:
+              type: string
+              required: true
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Device'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+      security:
+      - api_key: []
+    put:
+      tags:
+      - devices
+      summary: Updated seats device
+      parameters:
+      - in: "body"
+        name: "body"
+        schema:
+          type: object
+          properties:
+            parkingId:
+              type: string
+              required: true
+            seats:
+              type: number
+            allSeats:
+              type: number
+            deviceId:
+              type: string
+              required: true
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                required: true
+        404:
+          description: Device not found 
+  /devices/{id}:
+    delete:
+      tags:
+      - devices
+      summary: Delete device
+      parameters:
+      - name: id
+        in: path
+        description: 'The device id that needs to be fetched.'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Device'
+        400:
+          description: Invalid id supplied
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          description: Device not found
+      security:
+      - api_key: []
+    get:
+      tags:
+      - devices
+      summary: Get devices by parking id
+      parameters:
+      - name: id
+        in: path
+        description: 'The parking id that needs to be fetched devices.'
+        required: true
+        type: string
+        pattern: "^[a-f\d]{24}$"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Device'
+        400:
+          description: Invalid id supplied
+        404:
+          description: Parking not found    
+      security:
+      - api_key: []
+responses:
+  UnauthorizedError:
+    description: API key is missing or invalid
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+    UpdateUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+        secondName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+    Parking:
+      type: object
+      properties:
+        _id:
+          type: object
+          required: true
+        name:
+          type: string
+          required: true
+        city:
+          type: string
+          required: true
+        address:
+          type: string
+          required: true
+        location:
+          type: array
+        seats:
+          type: number
+        price:
+          type: number 
+        type:
+          type: string    
+        description:
+          type: string
+        owner:
+          $ref: '#/definitions/User'
+          required: true
+    UpdateParking:
+      type: object
+      properties:
+        name:
+          type: string
+          required: true
+        city:
+          type: string
+          required: true
+        address:
+          type: string
+          required: true
+        location:
+          items:
+            type: number
+        seats:
+          type: number
+        price:
+          type: number
+        type:
+          type: string
+        description:
+          type: string
+    Device:
+      type: object
